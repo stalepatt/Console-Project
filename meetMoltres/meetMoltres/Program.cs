@@ -20,6 +20,7 @@
             Console.BackgroundColor = ConsoleColor.Gray;
             Console.Clear();
 
+            // 각 오브젝트 위치 좌표
             int playerX = 5;
             int playerY = 5;
 
@@ -29,6 +30,12 @@
             int wallX = 7;
             int wallY = 7;
 
+            // 기호 상수 정의
+            const int MIN_X = 0;
+            const int MAX_X = 15;
+            const int MIN_Y = 0;
+            const int MAX_Y = 15;
+
             Direction playerMoveDirection = Direction.None;
 
             while (true)
@@ -37,46 +44,20 @@
                 Console.Clear();
 
                 //--플레이어 출력
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.SetCursorPosition(playerX, playerY);
-                Console.Write("P");
+                RenderObject(playerX, playerY, "P", ConsoleColor.Red);
 
                 //--바위 출력
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.SetCursorPosition(rockX, rockY);
-                Console.Write("O");
+                RenderObject(rockX, rockY, "O", ConsoleColor.White);
 
                 //--벽 출력
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.SetCursorPosition(wallX, wallY);
-                Console.Write("#");
-
+                RenderObject(wallX, wallY, "#", ConsoleColor.DarkYellow);
 
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
 
                 //---------처리---------
-                if (key == ConsoleKey.LeftArrow)
-                {
-                    playerX = Math.Clamp(playerX - 1, 0, 15);
-                    playerMoveDirection = Direction.Left;
-                }
-                if (key == ConsoleKey.RightArrow)
-                {
-                    playerX = Math.Clamp(playerX + 1, 0, 15);
-                    playerMoveDirection = Direction.Right;
-                }
-                if (key == ConsoleKey.UpArrow)
-                {
-                    playerY = Math.Clamp(playerY - 1, 0, 15);
-                    playerMoveDirection = Direction.Up;
-                }
-                if (key == ConsoleKey.DownArrow)
-                {
-                    playerY = Math.Clamp(playerY + 1, 0, 15);
-                    playerMoveDirection = Direction.Down;
-                }
-
+                MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
+                
                 // 플레이어와 바위가 충돌했을 때
                 if (playerX == rockX && playerY == rockY)
                 {
@@ -84,32 +65,31 @@
                     {
                         case Direction.Left:
                             {
-                                rockX = Math.Clamp(rockX - 1, 0, 15);
+                                rockX = Math.Clamp(rockX - 1, MIN_X, MAX_X);
                                 playerX = rockX + 1;
                             }
                             break;
                         case Direction.Right:
                             {
-                                rockX = Math.Clamp(rockX + 1, 0, 15);
+                                rockX = Math.Clamp(rockX + 1, MIN_X, MAX_X);
                                 playerX = rockX - 1;
                             }
                             break;
                         case Direction.Up:
                             {
-                                rockY = Math.Clamp(rockY - 1, 0, 15);
+                                rockY = Math.Clamp(rockY - 1, MIN_Y, MAX_Y);
                                 playerY = rockY + 1;
                             }
                             break;
                         case Direction.Down:
                             {
-                                rockY = Math.Clamp(rockY + 1, 0, 15);
+                                rockY = Math.Clamp(rockY + 1, MIN_Y, MAX_Y);
                                 playerY = rockY - 1;
                             }
                             break;
                         default:
                             {
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
                             }
                             return;
                     }
@@ -123,71 +103,129 @@
                     {
                         case Direction.Left:
                             {
-                                playerX = playerX + 1;
+                                ++playerX;
                             }
                             break;
                         case Direction.Right:
                             {
-                                playerX = playerX - 1;
+                                --playerX;
                             }
                             break;
                         case Direction.Up:
                             {
-                                playerY = playerY + 1;
+                                ++playerY;
                             }
                             break;
                         case Direction.Down:
                             {
-                                playerY = playerY - 1;
+                                --playerY;
                             }
                             break;
                         default:
                             {
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
                             }
                             return;
                     }
                 }
 
                 // 바위와 벽이 충돌했을 때
-                if (rockX == wallX && rockY == wallY)
+                if (false == IsCollided(rockX, wallX, rockY, wallY))
+                {
+                    continue;
+                }
+                else
                 {
                     switch (playerMoveDirection)
                     {
                         case Direction.Left:
                             {
-                                rockX = Math.Clamp(wallX + 1, 0, 15);
+                                MoveToRightOfTarget(out rockX, in wallX);
                                 playerX = rockX + 1;
                             }
                             break;
                         case Direction.Right:
                             {
-                                rockX = Math.Clamp(wallX - 1, 0, 15);
+                                MoveToLeftOfTarget(out rockX, in wallX);
                                 playerX = rockX - 1;
                             }
                             break;
                         case Direction.Up:
                             {
-                                rockY = Math.Clamp(wallY + 1, 0, 15);
+                                rockY = Math.Clamp(wallY + 1, MIN_Y, MAX_Y);
                                 playerY = rockY + 1;
                             }
                             break;
                         case Direction.Down:
                             {
-                                rockY = Math.Clamp(wallY - 1, 0, 15);
+                                rockY = Math.Clamp(wallY - 1, MIN_Y, MAX_Y);
                                 playerY = rockY - 1;
                             }
                             break;
                         default:
                             {
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
                             }
                             return;
                     }
                 }
             }
+
+            // 오브젝트를 그린다.
+            void RenderObject(int x, int y, string icon, ConsoleColor color)
+            {
+                Console.ForegroundColor = color;
+                Console.SetCursorPosition(x, y);
+                Console.Write(icon);
+            }
+
+            // 플레이어를 이동한다.
+            void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
+            {
+                if (key == ConsoleKey.LeftArrow)
+                {
+                    x = Math.Clamp(x - 1, 0, 15);
+                    moveDirection = Direction.Left;
+                }
+                if (key == ConsoleKey.RightArrow)
+                {
+                    x = Math.Clamp(x + 1, 0, 15);
+                    moveDirection = Direction.Right;
+                }
+                if (key == ConsoleKey.UpArrow)
+                {
+                    y = Math.Clamp(y - 1, 0, 15);
+                    moveDirection = Direction.Up;
+                }
+                if (key == ConsoleKey.DownArrow)
+                {
+                    y = Math.Clamp(y + 1, 0, 15);
+                    moveDirection = Direction.Down;
+                }
+            }
+
+            void ExitWithError(string errorMessage)
+            {
+                Console.Clear();
+                Console.WriteLine(errorMessage);
+                Environment.Exit(1);
+            }
+
+            bool IsCollided (int x1, int x2, int y1, int y2)
+            {
+                if (x1 == x2 && y1 == y2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
+            void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(target + 1, MAX_X);
+            void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
+            void MoveToOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
         }
     }
 }
