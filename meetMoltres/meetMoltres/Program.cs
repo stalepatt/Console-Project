@@ -36,6 +36,10 @@
             const int MIN_Y = 0;
             const int MAX_Y = 15;
 
+            // 박스가 여러 개일 경우 어떤 박스인지 구분하기 위한 인덱스
+            int pushedBoxIndex = 0;
+
+            // 플레이어의 이동방향
             Direction playerMoveDirection = Direction.None;
 
             while (true)
@@ -56,10 +60,46 @@
                 ConsoleKey key = Console.ReadKey().Key;
 
                 //---------처리---------
+
+                //플레이어 이동
                 MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
-                
+
+                // 플레이어와 벽이 충돌했을 때
+                if (IsCollided(playerX, wallX, playerY, wallY))
+                {
+                    switch (playerMoveDirection)
+                    {
+                        case Direction.Left:
+                            {
+                                MoveToRightOfTarget(out playerX, in wallX);
+                            }
+                            break;
+                        case Direction.Right:
+                            {
+                                MoveToLeftOfTarget(out playerX, in wallX);
+                            }
+                            break;
+                        case Direction.Up:
+                            {
+                                MoveToDownOfTarget(out playerY, in wallY);
+                            }
+                            break;
+                        case Direction.Down:
+                            {
+                                MoveToUpOfTarget(out playerY, in wallY);
+                            }
+                            break;
+                        default:
+                            {
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                            }
+                            return;
+                    }
+                }
+
+
                 // 플레이어와 바위가 충돌했을 때
-                if (playerX == rockX && playerY == rockY)
+                if (true == IsCollided(playerX, rockX, playerY, rockY))
                 {
                     switch (playerMoveDirection)
                     {
@@ -93,48 +133,13 @@
                             }
                             return;
                     }
-
                 }
 
-                // 플레이어와 벽이 충돌했을 때
-                if (playerX == wallX && playerY == wallY)
-                {
-                    switch (playerMoveDirection)
-                    {
-                        case Direction.Left:
-                            {
-                                ++playerX;
-                            }
-                            break;
-                        case Direction.Right:
-                            {
-                                --playerX;
-                            }
-                            break;
-                        case Direction.Up:
-                            {
-                                ++playerY;
-                            }
-                            break;
-                        case Direction.Down:
-                            {
-                                --playerY;
-                            }
-                            break;
-                        default:
-                            {
-                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                            }
-                            return;
-                    }
-                }
+
+                
 
                 // 바위와 벽이 충돌했을 때
-                if (false == IsCollided(rockX, wallX, rockY, wallY))
-                {
-                    continue;
-                }
-                else
+                if (true == IsCollided(rockX, wallX, rockY, wallY))
                 {
                     switch (playerMoveDirection)
                     {
@@ -152,13 +157,13 @@
                             break;
                         case Direction.Up:
                             {
-                                rockY = Math.Clamp(wallY + 1, MIN_Y, MAX_Y);
+                                MoveToDownOfTarget(out rockY, in wallY);
                                 playerY = rockY + 1;
                             }
                             break;
                         case Direction.Down:
                             {
-                                rockY = Math.Clamp(wallY - 1, MIN_Y, MAX_Y);
+                                MoveToUpOfTarget(out rockY, in wallY);
                                 playerY = rockY - 1;
                             }
                             break;
@@ -204,6 +209,7 @@
                 }
             }
 
+            // 비정상 동작 시 에러 메시지 출력 후 종료
             void ExitWithError(string errorMessage)
             {
                 Console.Clear();
@@ -211,7 +217,8 @@
                 Environment.Exit(1);
             }
 
-            bool IsCollided (int x1, int x2, int y1, int y2)
+            // 충돌 판정
+            bool IsCollided(int x1, int x2, int y1, int y2)
             {
                 if (x1 == x2 && y1 == y2)
                 {
@@ -222,10 +229,36 @@
                     return false;
                 }
             }
+
+            // target이 있는 경우 이동 처리
             void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
             void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(target + 1, MAX_X);
             void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
-            void MoveToOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
+            void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
+
+            // 충돌 처리
+
+            void OnCollision(Direction playerMoveDirection, ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
+            {
+                switch (playerMoveDirection)
+                {
+                    case Direction.Left:
+                        MoveToRightOfTarget(out objX, in collidedObjX);
+                        break;
+                    case Direction.Right:
+                        MoveToLeftOfTarget(out objX, in collidedObjX);
+                        break;
+                    case Direction.Up:
+                        MoveToDownOfTarget(out objY, in collidedObjY);
+                        break;
+                    case Direction.Down:
+                        MoveToUpOfTarget(out objY, in collidedObjY);
+                        break;
+                    default:
+                        ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                        return;
+                }
+            }
         }
     }
 }
