@@ -24,9 +24,10 @@
             int playerX = 5;
             int playerY = 5;
 
-            int rockX = 10;
-            int rockY = 10;
-
+            int[] rockX = { 10, 12 };
+            int[] rockY = { 10, 12 };
+            int rockCount = rockX.Length;
+            
             int wallX = 7;
             int wallY = 7;
 
@@ -51,7 +52,10 @@
                 RenderObject(playerX, playerY, "P", ConsoleColor.Red);
 
                 //--바위 출력
-                RenderObject(rockX, rockY, "O", ConsoleColor.White);
+                for (int rockId = 0; rockId < rockCount; ++rockId)
+                {
+                    RenderObject(rockX[rockId], rockY[rockId], "O", ConsoleColor.White);
+                }
 
                 //--벽 출력
                 RenderObject(wallX, wallY, "#", ConsoleColor.DarkYellow);
@@ -99,79 +103,84 @@
 
 
                 // 플레이어와 바위가 충돌했을 때
-                if (true == IsCollided(playerX, rockX, playerY, rockY))
+                for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    switch (playerMoveDirection)
+                    if (true == IsCollided(playerX, rockX[rockId], playerY, rockY[rockId]))
                     {
-                        case Direction.Left:
-                            {
-                                rockX = Math.Clamp(rockX - 1, MIN_X, MAX_X);
-                                playerX = rockX + 1;
-                            }
-                            break;
-                        case Direction.Right:
-                            {
-                                rockX = Math.Clamp(rockX + 1, MIN_X, MAX_X);
-                                playerX = rockX - 1;
-                            }
-                            break;
-                        case Direction.Up:
-                            {
-                                rockY = Math.Clamp(rockY - 1, MIN_Y, MAX_Y);
-                                playerY = rockY + 1;
-                            }
-                            break;
-                        case Direction.Down:
-                            {
-                                rockY = Math.Clamp(rockY + 1, MIN_Y, MAX_Y);
-                                playerY = rockY - 1;
-                            }
-                            break;
-                        default:
-                            {
-                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                            }
-                            return;
+                        switch (playerMoveDirection)
+                        {
+                            case Direction.Left:
+                                {
+                                    rockX[rockId] = Math.Clamp(rockX[rockId] - 1, MIN_X, MAX_X);
+                                    playerX = rockX[rockId] + 1;
+                                }
+                                break;
+                            case Direction.Right:
+                                {
+                                    rockX[rockId] = Math.Clamp(rockX[rockId] + 1, MIN_X, MAX_X);
+                                    playerX = rockX[rockId] - 1;
+                                }
+                                break;
+                            case Direction.Up:
+                                {
+                                    rockY[rockId] = Math.Clamp(rockY[rockId] - 1, MIN_Y, MAX_Y);
+                                    playerY = rockY[rockId] + 1;
+                                }
+                                break;
+                            case Direction.Down:
+                                {
+                                    rockY[rockId] = Math.Clamp(rockY[rockId] + 1, MIN_Y, MAX_Y);
+                                    playerY = rockY[rockId] - 1;
+                                }
+                                break;
+                            default:
+                                {
+                                    ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                                }
+                                return;
+                        }
                     }
                 }
 
 
-                
 
                 // 바위와 벽이 충돌했을 때
-                if (true == IsCollided(rockX, wallX, rockY, wallY))
+                for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    switch (playerMoveDirection)
+                    if (true == IsCollided(rockX[rockId], wallX, rockY[rockId], wallY))
                     {
-                        case Direction.Left:
-                            {
-                                MoveToRightOfTarget(out rockX, in wallX);
-                                playerX = rockX + 1;
-                            }
-                            break;
-                        case Direction.Right:
-                            {
-                                MoveToLeftOfTarget(out rockX, in wallX);
-                                playerX = rockX - 1;
-                            }
-                            break;
-                        case Direction.Up:
-                            {
-                                MoveToDownOfTarget(out rockY, in wallY);
-                                playerY = rockY + 1;
-                            }
-                            break;
-                        case Direction.Down:
-                            {
-                                MoveToUpOfTarget(out rockY, in wallY);
-                                playerY = rockY - 1;
-                            }
-                            break;
-                        default:
-                            {
-                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                            }
-                            return;
+                        switch (playerMoveDirection)
+                        {
+                            case Direction.Left:
+                                {
+                                    MoveToRightOfTarget(out rockX[rockId], in wallX);
+                                    playerX = rockX[rockId] + 1;
+                                }
+                                break;
+                            case Direction.Right:
+                                {
+                                    MoveToLeftOfTarget(out rockX[rockId], in wallX);
+                                    playerX = rockX[rockId] - 1;
+                                }
+                                break;
+                            case Direction.Up:
+                                {
+                                    MoveToDownOfTarget(out rockY[rockId], in wallY);
+                                    playerY = rockY[rockId] + 1;
+                                }
+                                break;
+                            case Direction.Down:
+                                {
+                                    MoveToUpOfTarget(out rockY[rockId], in wallY);
+                                    playerY = rockY[rockId] - 1;
+                                }
+                                break;
+                            default:
+                                {
+                                    ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                                }
+                                return;
+                        }
                     }
                 }
             }
