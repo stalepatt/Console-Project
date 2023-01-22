@@ -84,22 +84,26 @@
                     {
                         case Direction.Left:
                             {
-                                rockX = Math.Clamp(0, rockX - 1, 15);
+                                rockX = Math.Clamp(rockX - 1, 0, 15);
+                                playerX = rockX + 1;
                             }
                             break;
                         case Direction.Right:
                             {
-                                rockX = Math.Clamp(0, rockX + 1, 15);
+                                rockX = Math.Clamp(rockX + 1, 0, 15);
+                                playerX = rockX - 1;
                             }
                             break;
                         case Direction.Up:
                             {
-                                rockY = Math.Clamp(0, rockY - 1, 15);
+                                rockY = Math.Clamp(rockY - 1, 0, 15);
+                                playerY = rockY + 1;
                             }
                             break;
                         case Direction.Down:
                             {
-                                rockY = Math.Clamp(0, rockY + 1, 15);
+                                rockY = Math.Clamp(rockY + 1, 0, 15);
+                                playerY = rockY - 1;
                             }
                             break;
                         default:
@@ -153,25 +157,25 @@
                     {
                         case Direction.Left:
                             {
-                                rockX = rockX + 1;
-                                playerX = playerX + 1;
+                                rockX = Math.Clamp(wallX + 1, 0, 15);
+                                playerX = rockX + 1;
                             }
                             break;
                         case Direction.Right:
                             {
-                                rockX = rockX - 1;
+                                rockX = Math.Clamp(wallX - 1, 0, 15);
                                 playerX = rockX - 1;
                             }
                             break;
                         case Direction.Up:
                             {
-                                rockY = rockY + 1;
+                                rockY = Math.Clamp(wallY + 1, 0, 15);
                                 playerY = rockY + 1;
                             }
                             break;
                         case Direction.Down:
                             {
-                                rockY = rockY - 1;
+                                rockY = Math.Clamp(wallY - 1, 0, 15);
                                 playerY = rockY - 1;
                             }
                             break;
