@@ -87,11 +87,11 @@ namespace LegendaryMoltres
                 // 플레이어와 벽이 충돌했을 때
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (false == Game.IsCollided(player.X, walls[wallId].X, player.Y, walls[wallId].Y))
+                    if (false == CollisionHelper.IsCollided(player.X, walls[wallId].X, player.Y, walls[wallId].Y))
                     {
                         continue;
                     }
-                    Game.OnCollision(() =>
+                    CollisionHelper.OnCollision(() =>
                     {
                         Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, walls[wallId].X, walls[wallId].Y);
                     });
@@ -100,11 +100,11 @@ namespace LegendaryMoltres
                 // 플레이어와 바위가 충돌했을 때
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    if (false == Game.IsCollided(player.X, rocks[rockId].X, player.Y, rocks[rockId].Y))
+                    if (false == CollisionHelper.IsCollided(player.X, rocks[rockId].X, player.Y, rocks[rockId].Y))
                     {
                         continue;
                     }
-                    Game.OnCollision(() =>
+                    CollisionHelper.OnCollision(() =>
                     {
                         Game.MoveRock(player, rocks[rockId]);
                     });
@@ -122,12 +122,12 @@ namespace LegendaryMoltres
                         continue;
                     }
 
-                    if (false == Game.IsCollided(rocks[pushedRockIndex].X, rocks[rockId].X, rocks[pushedRockIndex].Y, rocks[rockId].Y))
+                    if (false == CollisionHelper.IsCollided(rocks[pushedRockIndex].X, rocks[rockId].X, rocks[pushedRockIndex].Y, rocks[rockId].Y))
                     {
                         continue;
                     }
 
-                    Game.OnCollision(() =>
+                    CollisionHelper.OnCollision(() =>
                     {
                         Game.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, rocks[rockId].X, rocks[rockId].Y);
                         Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
@@ -138,12 +138,12 @@ namespace LegendaryMoltres
 
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (false == Game.IsCollided(rocks[pushedRockIndex].X, walls[wallId].X, rocks[pushedRockIndex].Y, walls[wallId].Y))
+                    if (false == CollisionHelper.IsCollided(rocks[pushedRockIndex].X, walls[wallId].X, rocks[pushedRockIndex].Y, walls[wallId].Y))
                     {
                         continue;
 
                     }
-                    Game.OnCollision(() =>
+                    CollisionHelper.OnCollision(() =>
                     {
                         Game.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, walls[wallId].X, walls[wallId].Y);
                         Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
@@ -152,12 +152,9 @@ namespace LegendaryMoltres
                 }
 
                 // 바위가 트리거 위로 올라왔는지 확인
-                int rockOnGoalCount = Game.CountRockOnGoal(rocks, triggers);
-
+                int rockOnGoalCount = Game.CountRockOnGoal(rocks, triggers);               
                 
-                
-            }
-            
+            }            
         }
     }
 }

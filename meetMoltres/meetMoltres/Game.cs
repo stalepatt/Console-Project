@@ -55,18 +55,7 @@ namespace meetMoltres
             Environment.Exit(1);
         }
                 
-        // 충돌 판정
-        public static bool IsCollided(int x1, int x2, int y1, int y2)
-        {
-            if (x1 == x2 && y1 == y2)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        
 
         // target이 있는 경우 이동 처리
         public static void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
@@ -74,11 +63,7 @@ namespace meetMoltres
         public static void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
         public static void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
-        // 충돌 처리
-        public static void OnCollision(Action action)
-        {
-            action();
-        }
+        
 
         public static void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, int collidedObjX, int collidedObjY)
         {
