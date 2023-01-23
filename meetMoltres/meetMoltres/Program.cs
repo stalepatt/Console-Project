@@ -24,9 +24,13 @@ namespace LegendaryMoltres
             int[] rockY = { 10, 12 };
             int rockCount = rockX.Length;
 
-            int[] wallX = { 4, 7 };
-            int[] wallY = { 4, 7 };
-            int wallCount = wallX.Length;
+            Wall[] walls = new Wall[2]
+            {
+                new Wall {X = 4, Y = 4},
+                new Wall {X = 7, Y = 7}
+            };
+         
+            int wallCount = walls.Length;
 
 
             Trigger[] triggers = new Trigger[2]
@@ -74,7 +78,7 @@ namespace LegendaryMoltres
                 //--벽 출력
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    RenderObject(wallX[wallId], wallY[wallId], "‡", ConsoleColor.DarkYellow);
+                    RenderObject(walls[wallId].X, walls[wallId].Y, "‡", ConsoleColor.DarkYellow);
                 }
 
                 //---------입력---------
@@ -88,13 +92,13 @@ namespace LegendaryMoltres
                 // 플레이어와 벽이 충돌했을 때
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (false == IsCollided(playerX, wallX[wallId], playerY, wallY[wallId]))
+                    if (false == IsCollided(playerX, walls[wallId].X, playerY, walls[wallId].Y))
                     {
                         continue;
                     }
                     OnCollision(() =>
                     {
-                        PushOut(playerMoveDirection, ref playerX, ref playerY, wallX[wallId], wallY[wallId]);
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, walls[wallId].X, walls[wallId].Y);
                     });
                 }
 
@@ -139,14 +143,14 @@ namespace LegendaryMoltres
 
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (false == IsCollided(rockX[pushedRockIndex], wallX[wallId], rockY[pushedRockIndex], wallY[wallId]))
+                    if (false == IsCollided(rockX[pushedRockIndex], walls[wallId].X, rockY[pushedRockIndex], walls[wallId].Y))
                     {
                         continue;
 
                     }
                     OnCollision(() =>
                     {
-                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], wallX[wallId], wallY[wallId]);
+                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], walls[wallId].X, walls[wallId].Y);
                         PushOut(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
                     });
                     break;
