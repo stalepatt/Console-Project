@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,22 +57,19 @@ namespace meetMoltres
         }
 
         // map 경로 설정
-        public static void LoadMaps(int mapNumber, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers)
+        public static string[] LoadMaps(int mapNumber)
         {
             // 경로를 구성한다.
             string mapFilePath = Path.Combine("..\\..\\..\\Assets", "Maps", $"Maps{mapNumber:D2}.txt");
             Console.WriteLine(mapFilePath);
 
-            player = null;
-            rocks = null;
-            walls = null;
-            triggers = null;
-
             // 파일 존재 확인
-            if (File.Exists(mapFilePath))
+            if (false == File.Exists(mapFilePath))
             {
-                Console.WriteLine("Exists");
+                ExitWithError($"맵 파일이 없습니다. 맵 번호({mapNumber})");
             }
+            // 파일의 내용을 불러온다.
+            return File.ReadAllLines(mapFilePath);
         }
 
         // target이 있는 경우 이동 처리

@@ -18,6 +18,12 @@ namespace LegendaryMoltres
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Clear();
 
+            // 스테이지 파일 불러오기
+            string[] lines = Game.LoadMaps(01);
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                Console.WriteLine(lines[i]);
+            }
             Player player = new Player();
 
             Rock[] rocks = new Rock[2]
@@ -42,8 +48,6 @@ namespace LegendaryMoltres
                 new Trigger {X = 6, Y = 6}
             };
             int triggerCount = triggers.Length;
-
-            Game.LoadMaps(1, out player, out rocks, out walls, out triggers);
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;
