@@ -24,29 +24,16 @@ namespace LegendaryMoltres
             {
                 Console.WriteLine(lines[i]);
             }
-            Player player = new Player();
 
-            Rock[] rocks = new Rock[2]
-            {
-                new Rock {X = 10, Y = 10, IsOnGoal = false},
-                new Rock {X = 12, Y = 12, IsOnGoal = false}
-            };
+            // 스테이지 파일 파싱하여 초기 데이터 구성
+            Player player;
+            Rock[] rocks;
+            Wall[] walls;
+            Trigger[] triggers;
+            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers);
+
             int rockCount = rocks.Length;
-
-            Wall[] walls = new Wall[2]
-            {
-                new Wall {X = 4, Y = 4},
-                new Wall {X = 7, Y = 7}
-            };
-
             int wallCount = walls.Length;
-
-
-            Trigger[] triggers = new Trigger[2]
-            {
-                new Trigger {X = 9, Y = 9},
-                new Trigger {X = 6, Y = 6}
-            };
             int triggerCount = triggers.Length;
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스

@@ -11,9 +11,9 @@ namespace meetMoltres
     {
         // 기호 상수 정의
         const int MIN_X = 0;
-        const int MAX_X = 15;
+        const int MAX_X = 21;
         const int MIN_Y = 0;
-        const int MAX_Y = 15;
+        const int MAX_Y = 20;
 
         // 오브젝트를 그린다.
         public static void RenderObject(int x, int y, string icon, ConsoleColor color)
@@ -61,7 +61,6 @@ namespace meetMoltres
         {
             // 경로를 구성한다.
             string mapFilePath = Path.Combine("..\\..\\..\\Assets", "Maps", $"Maps{mapNumber:D2}.txt");
-            Console.WriteLine(mapFilePath);
 
             // 파일 존재 확인
             if (false == File.Exists(mapFilePath))
@@ -72,13 +71,69 @@ namespace meetMoltres
             return File.ReadAllLines(mapFilePath);
         }
 
+        public static void ParseMaps(string[] map, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers)
+        {
+            Debug.Assert(map != null);
+            String[] mapMetaData = map[map.Length - 1].Split(" ");
+            player = null;
+            rocks = new Rock[int.Parse(mapMetaData[0])];
+            walls = new Wall[int.Parse(mapMetaData[1])];
+            triggers = new Trigger[int.Parse(mapMetaData[2])];
+
+            int rockIndex = 0;
+            int wallIndex = 0;
+            int triggerIndex = 0;
+
+            for (int y = 0; y < map.Length - 1; ++y)
+            {
+                for (int x = 0; x < map.Length; ++x)
+                {
+                    switch (map[y][x])
+                    {
+                        case ObjectSymbol.Player:
+                            player = new Player { X = x, Y = y };
+                            break;
+
+                        case ObjectSymbol.Rock:
+                            rocks[rockIndex] = new Rock { X = x, Y = y };
+                            ++rockIndex;
+                            break;
+                        case ObjectSymbol.Wall:
+                            walls[wallIndex] = new Wall { X = x, Y = y };
+                            ++wallIndex;
+                            break;
+                        case ObjectSymbol.Trigger:
+                            triggers[triggerIndex] = new Trigger { X = x, Y = y };
+                            ++triggerIndex;
+                            break;
+                        case '[':
+                            break;
+                        case ']':
+                            break;
+                        case 'T':
+                            break;
+                        case 'I':
+                            break;
+                        case '∥':
+                            break;
+                        case ' ':
+                            break;
+                        default:
+                            ExitWithError("맵 파일이 잘못되었습니다.");
+                            break;
+
+                    }
+                }
+            }
+        }
+
         // target이 있는 경우 이동 처리
         public static void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
         public static void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(target + 1, MAX_X);
         public static void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
         public static void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
-        
+
 
         public static void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, int collidedObjX, int collidedObjY)
         {
