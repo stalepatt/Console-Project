@@ -15,6 +15,7 @@ namespace LegendaryMoltres
             Console.CursorVisible = false;
             Console.Title = "LegendaryMoltres";
             Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Clear();
 
             Player player = new Player();
@@ -42,7 +43,7 @@ namespace LegendaryMoltres
             };
             int triggerCount = triggers.Length;
 
-            
+            Game.LoadMaps(1, out player, out rocks, out walls, out triggers);
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;

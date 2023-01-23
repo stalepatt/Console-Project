@@ -54,8 +54,25 @@ namespace meetMoltres
             Console.WriteLine(errorMessage);
             Environment.Exit(1);
         }
-                
-        
+
+        // map 경로 설정
+        public static void LoadMaps(int mapNumber, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers)
+        {
+            // 경로를 구성한다.
+            string mapFilePath = Path.Combine("..\\..\\..\\Assets", "Maps", $"Maps{mapNumber:D2}.txt");
+            Console.WriteLine(mapFilePath);
+
+            player = null;
+            rocks = null;
+            walls = null;
+            triggers = null;
+
+            // 파일 존재 확인
+            if (File.Exists(mapFilePath))
+            {
+                Console.WriteLine("Exists");
+            }
+        }
 
         // target이 있는 경우 이동 처리
         public static void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
@@ -129,7 +146,7 @@ namespace meetMoltres
 
                 for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
                 {
-                    if (IsCollided(rocks[rockId].X, triggers[triggerId].X, rocks[rockId].Y, triggers[triggerId].Y))
+                    if (CollisionHelper.IsCollided(rocks[rockId].X, triggers[triggerId].X, rocks[rockId].Y, triggers[triggerId].Y))
                     {
                         ++result;
                         rocks[rockId].IsOnGoal = true;
