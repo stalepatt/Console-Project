@@ -8,8 +8,8 @@ namespace meetMoltres
 {
     internal class Player
     {
-        public int X;
-        public int Y;
+        public int X = 5;
+        public int Y = 5;
         public Direction MoveDirection;
     }
 }
