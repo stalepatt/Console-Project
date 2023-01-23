@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace meetMoltres
 {
-    internal class Class1
+    enum Direction // type for saving direction
     {
+        None,
+        Left,
+        Right,
+        Up,
+        Down
     }
 }

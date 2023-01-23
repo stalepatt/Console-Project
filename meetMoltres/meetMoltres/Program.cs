@@ -4,14 +4,6 @@ using System;
 
 namespace LegendaryMoltres
 {
-    enum Direction // type for saving direction
-    {
-        None,
-        Left,
-        Right,
-        Up,
-        Down
-    }
     class Sokoban
     {
         static void Main()
@@ -36,8 +28,13 @@ namespace LegendaryMoltres
             int[] wallY = { 4, 7 };
             int wallCount = wallX.Length;
 
-            int triggerX = 9;
-            int triggerY = 9;
+
+            Trigger[] triggers = new Trigger[2]
+            {
+                new Trigger {X = 9, Y = 9},
+                new Trigger {X = 6, Y = 6}
+            };
+            int triggerCount = triggers.Length;
 
             // 기호 상수 정의
             const int MIN_X = 0;
@@ -49,7 +46,7 @@ namespace LegendaryMoltres
             int pushedRockIndex = 0;
 
             // 바위가 트리거 위에 올라와있는지 저장
-            bool isRockOnGoal = false;
+            bool[] isRockOnGoal = new bool[triggerCount];
 
             // 플레이어의 이동방향
             Direction playerMoveDirection = Direction.None;
@@ -60,11 +57,14 @@ namespace LegendaryMoltres
                 Console.Clear();
 
                 //--트리거 출력
-                RenderObject(triggerX, triggerY, "@", ConsoleColor.Blue);
-                
+                for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
+                {
+                    RenderObject(triggers[triggerId].X, triggers[triggerId].Y, "@", ConsoleColor.Blue);
+                }
+
                 //--플레이어 출력
                 RenderObject(playerX, playerY, "¶", ConsoleColor.Red);
-                
+
                 //--바위 출력
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
@@ -75,7 +75,7 @@ namespace LegendaryMoltres
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
                     RenderObject(wallX[wallId], wallY[wallId], "‡", ConsoleColor.DarkYellow);
-                }                              
+                }
 
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -95,7 +95,7 @@ namespace LegendaryMoltres
                     OnCollision(() =>
                     {
                         PushOut(playerMoveDirection, ref playerX, ref playerY, wallX[wallId], wallY[wallId]);
-                    });                    
+                    });
                 }
 
                 // 플레이어와 바위가 충돌했을 때
@@ -109,7 +109,7 @@ namespace LegendaryMoltres
                     {
                         MoveRock(playerMoveDirection, ref rockX[rockId], ref rockY[rockId], in playerX, in playerY);
                     });
-                    
+
                     // 어떤 박스를 밀었는지 저장
                     pushedRockIndex = rockId;
                     break;
@@ -153,16 +153,10 @@ namespace LegendaryMoltres
                 }
 
 
-                
+
 
                 // 바위가 트리거 위로 올라왔는지 확인
-                int rockOnGoalCount = 0;
-                if (IsCollided(rockX[pushedRockIndex], triggerX, rockY[pushedRockIndex], triggerY))
-                {
-                    ++rockOnGoalCount;
-                    isRockOnGoal = true;
-                }
-
+                int rockOnGoalCount = CountRockOnGoal(in rockX, in rockY, ref isRockOnGoal, triggers);
 
                 // 오브젝트를 그린다.
                 void RenderObject(int x, int y, string icon, ConsoleColor color)
@@ -229,7 +223,7 @@ namespace LegendaryMoltres
                 {
                     action();
                 }
-               
+
                 void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
                 {
                     switch (playerMoveDirection)
@@ -268,12 +262,12 @@ namespace LegendaryMoltres
                             break;
                         case Direction.Up:
                             {
-                                MoveToUpOfTarget(out rockY, in playerY);                                
+                                MoveToUpOfTarget(out rockY, in playerY);
                             }
                             break;
                         case Direction.Down:
                             {
-                                MoveToDownOfTarget(out rockY, in playerY);                               
+                                MoveToDownOfTarget(out rockY, in playerY);
                             }
                             break;
                         default:
@@ -282,6 +276,25 @@ namespace LegendaryMoltres
                             }
                             break;
                     }
+                }
+                int CountRockOnGoal(in int[] rockX, in int[] rockY, ref bool[] isRockOnTrigger, Trigger[] triggers)
+                {
+                    int result = 0;
+                    for (int rockId = 0; rockId < rockCount; ++rockId)
+                    {
+                        isRockOnGoal[rockId] = false;
+
+                        for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
+                        {
+                            if (IsCollided(rockX[pushedRockIndex], triggers[0].X, rockY[pushedRockIndex], triggers[0].Y))
+                            {
+                                ++result;
+                                isRockOnGoal[rockId] = true;
+                                break;
+                            }
+                        }
+                    }
+                    return result;
                 }
             }
         }
