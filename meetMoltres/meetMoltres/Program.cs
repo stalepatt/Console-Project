@@ -1,4 +1,6 @@
 ﻿using meetMoltres;
+using System.Text;
+using System;
 
 namespace LegendaryMoltres
 {
@@ -30,8 +32,12 @@ namespace LegendaryMoltres
             int[] rockY = { 10, 12 };
             int rockCount = rockX.Length;
 
-            int wallX = 7;
-            int wallY = 7;
+            int[] wallX = { 4, 7 };
+            int[] wallY = { 4, 7 };
+            int wallCount = wallX.Length;
+
+            int triggerX = 9;
+            int triggerY = 9;
 
             // 기호 상수 정의
             const int MIN_X = 0;
@@ -39,8 +45,11 @@ namespace LegendaryMoltres
             const int MIN_Y = 0;
             const int MAX_Y = 15;
 
-            // 박스가 여러 개일 경우 어떤 박스인지 구분하기 위한 인덱스
+            // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;
+
+            // 바위가 트리거 위에 올라와있는지 저장
+            bool isRockOnGoal = false;
 
             // 플레이어의 이동방향
             Direction playerMoveDirection = Direction.None;
@@ -50,9 +59,12 @@ namespace LegendaryMoltres
                 //---------render---------
                 Console.Clear();
 
+                //--트리거 출력
+                RenderObject(triggerX, triggerY, "@", ConsoleColor.Blue);
+                
                 //--플레이어 출력
                 RenderObject(playerX, playerY, "¶", ConsoleColor.Red);
-
+                
                 //--바위 출력
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
@@ -60,7 +72,10 @@ namespace LegendaryMoltres
                 }
 
                 //--벽 출력
-                RenderObject(wallX, wallY, "‡", ConsoleColor.DarkYellow);
+                for (int wallId = 0; wallId < wallCount; ++wallId)
+                {
+                    RenderObject(wallX[wallId], wallY[wallId], "‡", ConsoleColor.DarkYellow);
+                }                              
 
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -71,68 +86,30 @@ namespace LegendaryMoltres
                 MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
 
                 // 플레이어와 벽이 충돌했을 때
-                if (IsCollided(playerX, wallX, playerY, wallY))
+                for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    switch (playerMoveDirection)
-                    {
-                        case Direction.Left:
-                            {
-                                MoveToRightOfTarget(out playerX, in wallX);
-                            }
-                            break;
-                        case Direction.Right:
-                            {
-                                MoveToLeftOfTarget(out playerX, in wallX);
-                            }
-                            break;
-                        case Direction.Up:
-                            {
-                                MoveToDownOfTarget(out playerY, in wallY);
-                            }
-                            break;
-                        case Direction.Down:
-                            {
-                                MoveToUpOfTarget(out playerY, in wallY);
-                            }
-                            break;
-                        default:
-                            {
-                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                            }
-                            return;
-                    }
-                }
-
-
-                // 플레이어와 바위가 충돌했을 때
-                for (int rockId = 0; rockId < rockCount; ++rockId)
-                {
-                    if (IsCollided(playerX, rockX[rockId], playerY, rockY[rockId]))
+                    if (IsCollided(playerX, wallX[wallId], playerY, wallY[wallId]))
                     {
                         switch (playerMoveDirection)
                         {
                             case Direction.Left:
                                 {
-                                    MoveToLeftOfTarget(out rockX[rockId], in playerX);
-                                    playerX = rockX[rockId] + 1;
+                                    MoveToRightOfTarget(out playerX, in wallX[wallId]);
                                 }
                                 break;
                             case Direction.Right:
                                 {
-                                    MoveToRightOfTarget(out rockX[rockId], in playerX);
-                                    playerX = rockX[rockId] - 1;
+                                    MoveToLeftOfTarget(out playerX, in wallX[wallId]);
                                 }
                                 break;
                             case Direction.Up:
                                 {
-                                    MoveToUpOfTarget(out rockY[rockId], in playerY);
-                                    playerY = rockY[rockId] + 1;
+                                    MoveToDownOfTarget(out playerY, in wallY[wallId]);
                                 }
                                 break;
                             case Direction.Down:
                                 {
-                                    MoveToDownOfTarget(out rockY[rockId], in playerY);
-                                    playerY = rockY[rockId] - 1;
+                                    MoveToUpOfTarget(out playerY, in wallY[wallId]);
                                 }
                                 break;
                             default:
@@ -144,48 +121,63 @@ namespace LegendaryMoltres
                     }
                 }
 
-                // 바위와 벽이 충돌했을 때
+                // 플레이어와 바위가 충돌했을 때
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    if (false == IsCollided(rockX[rockId], wallX, rockY[rockId], wallY))
+                    if (false == IsCollided(playerX, rockX[rockId], playerY, rockY[rockId]))
                     {
                         continue;
-                        //switch (playerMoveDirection)
-                        //{
-                        //    case Direction.Left:
-                        //        {
-                        //            MoveToRightOfTarget(out rockX[rockId], in wallX);
-                        //            playerX = rockX[rockId] + 1;
-                        //        }
-                        //        break;
-                        //    case Direction.Right:
-                        //        {
-                        //            MoveToLeftOfTarget(out rockX[rockId], in wallX);
-                        //            playerX = rockX[rockId] - 1;
-                        //        }
-                        //        break;
-                        //    case Direction.Up:
-                        //        {
-                        //            MoveToDownOfTarget(out rockY[rockId], in wallY);
-                        //            playerY = rockY[rockId] + 1;
-                        //        }
-                        //        break;
-                        //    case Direction.Down:
-                        //        {
-                        //            MoveToUpOfTarget(out rockY[rockId], in wallY);
-                        //            playerY = rockY[rockId] - 1;
-                        //        }
-                        //        break;
-                        //    default:
-                        //        {
-                        //            ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                        //        }
-                        //        return;
-                        //}
                     }
-                    OnCollision(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], wallX, wallY);
+                    switch (playerMoveDirection)
+                    {
+                        case Direction.Left:
+                            {
+                                MoveToLeftOfTarget(out rockX[rockId], in playerX);
+                                playerX = rockX[rockId] + 1;
+                            }
+                            break;
+                        case Direction.Right:
+                            {
+                                MoveToRightOfTarget(out rockX[rockId], in playerX);
+                                playerX = rockX[rockId] - 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            {
+                                MoveToUpOfTarget(out rockY[rockId], in playerY);
+                                playerY = rockY[rockId] + 1;
+                            }
+                            break;
+                        case Direction.Down:
+                            {
+                                MoveToDownOfTarget(out rockY[rockId], in playerY);
+                                playerY = rockY[rockId] - 1;
+                            }
+                            break;
+                        default:
+                            {
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                            }
+                            return;
+                    }
+                    // 어떤 박스를 밀었는지 저장
+                    pushedRockIndex = rockId;
+                    break;
+                }
+
+                // 바위와 벽이 충돌했을 때
+
+                for (int wallId = 0; wallId < wallCount; ++wallId)
+                {
+                    if (false == IsCollided(rockX[pushedRockIndex], wallX[wallId], rockY[pushedRockIndex], wallY[wallId]))
+                    {
+                        continue;
+
+                    }
+                    OnCollision(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], wallX[wallId], wallY[wallId]);
                     OnCollision(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
                 }
+
 
                 // 바위끼리 충돌 했을 때
                 for (int rockId = 0; rockId < rockCount; ++rockId)
@@ -203,6 +195,15 @@ namespace LegendaryMoltres
                     OnCollision(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], in rockX[rockId], in rockY[rockId]);
                     OnCollision(playerMoveDirection, ref playerX, ref playerY, in rockX[pushedRockIndex], in rockY[pushedRockIndex]);
                 }
+
+                // 바위가 트리거 위로 올라왔는지 확인
+                int rockOnGoalCount = 0;
+                if (rockX[pushedRockIndex] == triggerX && rockY[pushedRockIndex] == triggerY)
+                {
+                    ++rockOnGoalCount;
+                    isRockOnGoal = true;
+                }
+
 
                 // 오브젝트를 그린다.
                 void RenderObject(int x, int y, string icon, ConsoleColor color)
