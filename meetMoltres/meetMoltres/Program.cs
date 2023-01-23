@@ -69,7 +69,7 @@ namespace LegendaryMoltres
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
                     RenderObject(rockX[rockId], rockY[rockId], "O", ConsoleColor.White);
-                }
+                }                     
 
                 //--벽 출력
                 for (int wallId = 0; wallId < wallCount; ++wallId)
@@ -286,7 +286,7 @@ namespace LegendaryMoltres
 
                         for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
                         {
-                            if (IsCollided(rockX[pushedRockIndex], triggers[0].X, rockY[pushedRockIndex], triggers[0].Y))
+                            if (IsCollided(rockX[rockId], triggers[triggerId].X, rockY[rockId], triggers[triggerId].Y))
                             {
                                 ++result;
                                 isRockOnGoal[rockId] = true;
