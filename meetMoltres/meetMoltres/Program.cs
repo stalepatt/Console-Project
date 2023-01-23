@@ -1,6 +1,7 @@
 ﻿using meetMoltres;
 using System.Text;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace LegendaryMoltres
 {
@@ -20,16 +21,21 @@ namespace LegendaryMoltres
             int playerX = 5;
             int playerY = 5;
 
-            int[] rockX = { 10, 12 };
-            int[] rockY = { 10, 12 };
-            int rockCount = rockX.Length;
+            //int[] rockX = { 10, 12 };
+            //int[] rockY = { 10, 12 };
+            Rock[] rocks = new Rock[2]
+            {
+                new Rock {X = 10, Y = 10, IsOnGoal = false},
+                new Rock {X = 12, Y = 12, IsOnGoal = false}
+            };
+            int rockCount = rocks.Length;
 
             Wall[] walls = new Wall[2]
             {
                 new Wall {X = 4, Y = 4},
                 new Wall {X = 7, Y = 7}
             };
-         
+
             int wallCount = walls.Length;
 
 
@@ -72,8 +78,8 @@ namespace LegendaryMoltres
                 //--바위 출력
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    RenderObject(rockX[rockId], rockY[rockId], "O", ConsoleColor.White);
-                }                     
+                    RenderObject(rocks[rockId].X, rocks[rockId].Y, "O", ConsoleColor.White);
+                }
 
                 //--벽 출력
                 for (int wallId = 0; wallId < wallCount; ++wallId)
@@ -105,13 +111,13 @@ namespace LegendaryMoltres
                 // 플레이어와 바위가 충돌했을 때
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    if (false == IsCollided(playerX, rockX[rockId], playerY, rockY[rockId]))
+                    if (false == IsCollided(playerX, rocks[rockId].X, playerY, rocks[rockId].Y))
                     {
                         continue;
                     }
                     OnCollision(() =>
                     {
-                        MoveRock(playerMoveDirection, ref rockX[rockId], ref rockY[rockId], in playerX, in playerY);
+                        MoveRock(playerMoveDirection, rocks[rockId], playerX, playerY);
                     });
 
                     // 어떤 박스를 밀었는지 저장
@@ -127,15 +133,15 @@ namespace LegendaryMoltres
                         continue;
                     }
 
-                    if (false == IsCollided(rockX[pushedRockIndex], rockX[rockId], rockY[pushedRockIndex], rockY[rockId]))
+                    if (false == IsCollided(rocks[pushedRockIndex].X, rocks[rockId].X, rocks[pushedRockIndex].Y, rocks[rockId].Y))
                     {
                         continue;
                     }
 
                     OnCollision(() =>
                     {
-                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], rockX[rockId], rockY[rockId]);
-                        PushOut(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
+                        PushOut(playerMoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, rocks[rockId].X, rocks[rockId].Y);
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
                     });
                 }
 
@@ -143,15 +149,15 @@ namespace LegendaryMoltres
 
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (false == IsCollided(rockX[pushedRockIndex], walls[wallId].X, rockY[pushedRockIndex], walls[wallId].Y))
+                    if (false == IsCollided(rocks[pushedRockIndex].X, walls[wallId].X, rocks[pushedRockIndex].Y, walls[wallId].Y))
                     {
                         continue;
 
                     }
                     OnCollision(() =>
                     {
-                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], walls[wallId].X, walls[wallId].Y);
-                        PushOut(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
+                        PushOut(playerMoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, walls[wallId].X, walls[wallId].Y);
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
                     });
                     break;
                 }
@@ -160,7 +166,7 @@ namespace LegendaryMoltres
 
 
                 // 바위가 트리거 위로 올라왔는지 확인
-                int rockOnGoalCount = CountRockOnGoal(in rockX, in rockY, ref isRockOnGoal, triggers);
+                int rockOnGoalCount = CountRockOnGoal(rocks, triggers);
 
                 // 오브젝트를 그린다.
                 void RenderObject(int x, int y, string icon, ConsoleColor color)
@@ -228,7 +234,7 @@ namespace LegendaryMoltres
                     action();
                 }
 
-                void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
+                void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, int collidedObjX, int collidedObjY)
                 {
                     switch (playerMoveDirection)
                     {
@@ -250,28 +256,28 @@ namespace LegendaryMoltres
                     }
                 }
 
-                void MoveRock(Direction playerMoveDirection, ref int rockX, ref int rockY, in int playerX, in int playerY)
+                void MoveRock(Direction playerMoveDirection, Rock rock, int playerX, int playerY)
                 {
                     switch (playerMoveDirection)
                     {
                         case Direction.Left:
                             {
-                                MoveToLeftOfTarget(out rockX, in playerX);
+                                MoveToLeftOfTarget(out rock.X, in playerX);
                             }
                             break;
                         case Direction.Right:
                             {
-                                MoveToRightOfTarget(out rockX, in playerX);
+                                MoveToRightOfTarget(out rock.X, in playerX);
                             }
                             break;
                         case Direction.Up:
                             {
-                                MoveToUpOfTarget(out rockY, in playerY);
+                                MoveToUpOfTarget(out rock.Y, in playerY);
                             }
                             break;
                         case Direction.Down:
                             {
-                                MoveToDownOfTarget(out rockY, in playerY);
+                                MoveToDownOfTarget(out rock.Y, in playerY);
                             }
                             break;
                         default:
@@ -281,19 +287,19 @@ namespace LegendaryMoltres
                             break;
                     }
                 }
-                int CountRockOnGoal(in int[] rockX, in int[] rockY, ref bool[] isRockOnTrigger, Trigger[] triggers)
+                int CountRockOnGoal(Rock[] rocks, Trigger[] triggers)
                 {
                     int result = 0;
                     for (int rockId = 0; rockId < rockCount; ++rockId)
                     {
-                        isRockOnGoal[rockId] = false;
+                        rocks[rockId].IsOnGoal = false;
 
                         for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
                         {
-                            if (IsCollided(rockX[rockId], triggers[triggerId].X, rockY[rockId], triggers[triggerId].Y))
+                            if (IsCollided(rocks[rockId].X, triggers[triggerId].X, rocks[rockId].Y, triggers[triggerId].Y))
                             {
                                 ++result;
-                                isRockOnGoal[rockId] = true;
+                                rocks[rockId].IsOnGoal = true;
                                 break;
                             }
                         }
