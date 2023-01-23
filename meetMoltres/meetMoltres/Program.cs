@@ -88,37 +88,14 @@ namespace LegendaryMoltres
                 // 플레이어와 벽이 충돌했을 때
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    if (IsCollided(playerX, wallX[wallId], playerY, wallY[wallId]))
+                    if (false == IsCollided(playerX, wallX[wallId], playerY, wallY[wallId]))
                     {
-                        switch (playerMoveDirection)
-                        {
-                            case Direction.Left:
-                                {
-                                    MoveToRightOfTarget(out playerX, in wallX[wallId]);
-                                }
-                                break;
-                            case Direction.Right:
-                                {
-                                    MoveToLeftOfTarget(out playerX, in wallX[wallId]);
-                                }
-                                break;
-                            case Direction.Up:
-                                {
-                                    MoveToDownOfTarget(out playerY, in wallY[wallId]);
-                                }
-                                break;
-                            case Direction.Down:
-                                {
-                                    MoveToUpOfTarget(out playerY, in wallY[wallId]);
-                                }
-                                break;
-                            default:
-                                {
-                                    ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                                }
-                                return;
-                        }
+                        continue;
                     }
+                    OnCollision(() =>
+                    {
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, wallX[wallId], wallY[wallId]);
+                    });                    
                 }
 
                 // 플레이어와 바위가 충돌했을 때
@@ -128,56 +105,15 @@ namespace LegendaryMoltres
                     {
                         continue;
                     }
-                    switch (playerMoveDirection)
+                    OnCollision(() =>
                     {
-                        case Direction.Left:
-                            {
-                                MoveToLeftOfTarget(out rockX[rockId], in playerX);
-                                playerX = rockX[rockId] + 1;
-                            }
-                            break;
-                        case Direction.Right:
-                            {
-                                MoveToRightOfTarget(out rockX[rockId], in playerX);
-                                playerX = rockX[rockId] - 1;
-                            }
-                            break;
-                        case Direction.Up:
-                            {
-                                MoveToUpOfTarget(out rockY[rockId], in playerY);
-                                playerY = rockY[rockId] + 1;
-                            }
-                            break;
-                        case Direction.Down:
-                            {
-                                MoveToDownOfTarget(out rockY[rockId], in playerY);
-                                playerY = rockY[rockId] - 1;
-                            }
-                            break;
-                        default:
-                            {
-                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-                            }
-                            return;
-                    }
+                        MoveRock(playerMoveDirection, ref rockX[rockId], ref rockY[rockId], in playerX, in playerY);
+                    });
+                    
                     // 어떤 박스를 밀었는지 저장
                     pushedRockIndex = rockId;
                     break;
                 }
-
-                // 바위와 벽이 충돌했을 때
-
-                for (int wallId = 0; wallId < wallCount; ++wallId)
-                {
-                    if (false == IsCollided(rockX[pushedRockIndex], wallX[wallId], rockY[pushedRockIndex], wallY[wallId]))
-                    {
-                        continue;
-
-                    }
-                    OnCollision(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], wallX[wallId], wallY[wallId]);
-                    OnCollision(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
-                }
-
 
                 // 바위끼리 충돌 했을 때
                 for (int rockId = 0; rockId < rockCount; ++rockId)
@@ -192,13 +128,36 @@ namespace LegendaryMoltres
                         continue;
                     }
 
-                    OnCollision(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], in rockX[rockId], in rockY[rockId]);
-                    OnCollision(playerMoveDirection, ref playerX, ref playerY, in rockX[pushedRockIndex], in rockY[pushedRockIndex]);
+                    OnCollision(() =>
+                    {
+                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], rockX[rockId], rockY[rockId]);
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
+                    });
                 }
+
+                // 바위와 벽이 충돌했을 때
+
+                for (int wallId = 0; wallId < wallCount; ++wallId)
+                {
+                    if (false == IsCollided(rockX[pushedRockIndex], wallX[wallId], rockY[pushedRockIndex], wallY[wallId]))
+                    {
+                        continue;
+
+                    }
+                    OnCollision(() =>
+                    {
+                        PushOut(playerMoveDirection, ref rockX[pushedRockIndex], ref rockY[pushedRockIndex], wallX[wallId], wallY[wallId]);
+                        PushOut(playerMoveDirection, ref playerX, ref playerY, rockX[pushedRockIndex], rockY[pushedRockIndex]);
+                    });
+                    break;
+                }
+
+
+                
 
                 // 바위가 트리거 위로 올라왔는지 확인
                 int rockOnGoalCount = 0;
-                if (rockX[pushedRockIndex] == triggerX && rockY[pushedRockIndex] == triggerY)
+                if (IsCollided(rockX[pushedRockIndex], triggerX, rockY[pushedRockIndex], triggerY))
                 {
                     ++rockOnGoalCount;
                     isRockOnGoal = true;
@@ -266,8 +225,12 @@ namespace LegendaryMoltres
                 void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
                 // 충돌 처리
-
-                void OnCollision(Direction playerMoveDirection, ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
+                void OnCollision(Action action)
+                {
+                    action();
+                }
+               
+                void PushOut(Direction playerMoveDirection, ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
                 {
                     switch (playerMoveDirection)
                     {
@@ -286,6 +249,38 @@ namespace LegendaryMoltres
                         default:
                             ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
                             return;
+                    }
+                }
+
+                void MoveRock(Direction playerMoveDirection, ref int rockX, ref int rockY, in int playerX, in int playerY)
+                {
+                    switch (playerMoveDirection)
+                    {
+                        case Direction.Left:
+                            {
+                                MoveToLeftOfTarget(out rockX, in playerX);
+                            }
+                            break;
+                        case Direction.Right:
+                            {
+                                MoveToRightOfTarget(out rockX, in playerX);
+                            }
+                            break;
+                        case Direction.Up:
+                            {
+                                MoveToUpOfTarget(out rockY, in playerY);                                
+                            }
+                            break;
+                        case Direction.Down:
+                            {
+                                MoveToDownOfTarget(out rockY, in playerY);                               
+                            }
+                            break;
+                        default:
+                            {
+                                ExitWithError($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                            }
+                            break;
                     }
                 }
             }
