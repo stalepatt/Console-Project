@@ -11,7 +11,7 @@ namespace meetMoltres
     {
         // 기호 상수 정의
         const int MIN_X = 0;
-        const int MAX_X = 21;
+        const int MAX_X = 20;
         const int MIN_Y = 0;
         const int MAX_Y = 20;
 
@@ -86,7 +86,7 @@ namespace meetMoltres
 
             for (int y = 0; y < map.Length - 1; ++y)
             {
-                for (int x = 0; x < map.Length; ++x)
+                for (int x = 0; x < map[y].Length; ++x)
                 {
                     switch (map[y][x])
                     {

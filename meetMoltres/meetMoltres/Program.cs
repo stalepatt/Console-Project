@@ -18,14 +18,19 @@ namespace LegendaryMoltres
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Clear();
 
-            // 스테이지 파일 불러오기
+            // 맵 파일 불러오기
             string[] lines = Game.LoadMaps(01);
             for (int i = 0; i < lines.Length; ++i)
             {
-                Console.WriteLine(lines[i]);
+                for( int j = 0; j < lines[i].Length; ++j)
+                {
+                    Console.SetCursorPosition(j, i);
+                    Console.Write(lines[i][j]);
+                }
+                //Console.WriteLine(lines[i]);
             }
 
-            // 스테이지 파일 파싱하여 초기 데이터 구성
+            // 맵 파일 파싱하여 초기 데이터 구성
             Player player;
             Rock[] rocks;
             Wall[] walls;
