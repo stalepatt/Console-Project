@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace meetMoltres
 {
-    internal class Player
+    internal class DisappearingWall
     {
         public int X;
         public int Y;
-        public Direction MoveDirection;
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace LegendaryMoltres
 {
-    class Sokoban
+    static class Sokoban
     {
         static void Main()
         {
@@ -22,12 +22,7 @@ namespace LegendaryMoltres
             string[] lines = Game.LoadMaps(01);
             for (int i = 0; i < lines.Length; ++i)
             {
-                for( int j = 0; j < lines[i].Length; ++j)
-                {
-                    Console.SetCursorPosition(j, i);
-                    Console.Write(lines[i][j]);
-                }
-                //Console.WriteLine(lines[i]);
+                Console.WriteLine(lines[i]);
             }
 
             // 맵 파일 파싱하여 초기 데이터 구성
@@ -35,17 +30,19 @@ namespace LegendaryMoltres
             Rock[] rocks;
             Wall[] walls;
             Trigger[] triggers;
-            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers);
+            DisappearingWall[] disappearingWalls;
+            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers, out disappearingWalls);
 
             int rockCount = rocks.Length;
             int wallCount = walls.Length;
             int triggerCount = triggers.Length;
+            int disappearingWallCount = disappearingWalls.Length;
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;
 
             // 바위가 트리거 위에 올라와있는지 저장
-            bool[] isRockOnGoal = new bool[triggerCount];
+            bool[] isRockOnTrigger = new bool[triggerCount];
 
             while (true)
             {
@@ -55,7 +52,7 @@ namespace LegendaryMoltres
                 //--트리거 출력
                 for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
                 {
-                    Game.RenderObject(triggers[triggerId].X, triggers[triggerId].Y, "@", ConsoleColor.Blue);
+                    Game.RenderObject(triggers[triggerId].X, triggers[triggerId].Y, "Θ", ConsoleColor.Blue);
                 }
 
                 //--플레이어 출력
@@ -70,7 +67,12 @@ namespace LegendaryMoltres
                 //--벽 출력
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {
-                    Game.RenderObject(walls[wallId].X, walls[wallId].Y, "‡", ConsoleColor.DarkYellow);
+                    Game.RenderObject(walls[wallId].X, walls[wallId].Y, "▒", ConsoleColor.DarkYellow);
+                }
+                //--사라지는 벽 출력
+                for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId)
+                {
+                    Game.RenderObject(disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y, "§", ConsoleColor.DarkBlue);
                 }
 
                 //---------입력---------
@@ -79,7 +81,7 @@ namespace LegendaryMoltres
                 //---------처리---------
 
                 //플레이어 이동
-                Game.MovePlayer(key, player);
+                Movement.MovePlayer(key, player);
 
                 // 플레이어와 벽이 충돌했을 때
                 for (int wallId = 0; wallId < wallCount; ++wallId)
@@ -90,7 +92,7 @@ namespace LegendaryMoltres
                     }
                     CollisionHelper.OnCollision(() =>
                     {
-                        Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, walls[wallId].X, walls[wallId].Y);
+                        Movement.PushOut(player.MoveDirection, ref player.X, ref player.Y, walls[wallId].X, walls[wallId].Y);
                     });
                 }
 
@@ -103,7 +105,7 @@ namespace LegendaryMoltres
                     }
                     CollisionHelper.OnCollision(() =>
                     {
-                        Game.MoveRock(player, rocks[rockId]);
+                        Movement.MoveRock(player, rocks[rockId]);
                     });
 
                     // 어떤 박스를 밀었는지 저장
@@ -126,8 +128,8 @@ namespace LegendaryMoltres
 
                     CollisionHelper.OnCollision(() =>
                     {
-                        Game.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, rocks[rockId].X, rocks[rockId].Y);
-                        Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
+                        Movement.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, rocks[rockId].X, rocks[rockId].Y);
+                        Movement.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
                     });
                 }
 
@@ -142,14 +144,29 @@ namespace LegendaryMoltres
                     }
                     CollisionHelper.OnCollision(() =>
                     {
-                        Game.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, walls[wallId].X, walls[wallId].Y);
-                        Game.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
+                        Movement.PushOut(player.MoveDirection, ref rocks[pushedRockIndex].X, ref rocks[pushedRockIndex].Y, walls[wallId].X, walls[wallId].Y);
+                        Movement.PushOut(player.MoveDirection, ref player.X, ref player.Y, rocks[pushedRockIndex].X, rocks[pushedRockIndex].Y);
+                    });
+                    break;
+                }
+
+                // 사라지는 벽과 플레이어 충돌
+
+                for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId) 
+                {
+                    if (false == CollisionHelper.IsCollided(player.X, disappearingWalls[disappearingWallId].X, player.Y, disappearingWalls[disappearingWallId].Y ))
+                    {  
+                        continue; 
+                    }
+                    CollisionHelper.OnCollision(() =>
+                    {
+                        Movement.PushOut(player.MoveDirection, ref player.X, ref player.Y, disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y);
                     });
                     break;
                 }
 
                 // 바위가 트리거 위로 올라왔는지 확인
-                int rockOnGoalCount = Game.CountRockOnGoal(rocks, triggers);               
+                int rockOnTriggerCount = Game.CountRockOnTrigger(rocks, triggers);               
                 
             }            
         }

@@ -12,5 +12,6 @@ namespace meetMoltres
         public const char Rock = 'O';
         public const char Wall = '#';
         public const char Trigger = 'G';
+        public const char DisappearingWall = '§';
     }
 }
