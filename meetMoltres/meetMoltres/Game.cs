@@ -10,6 +10,11 @@ namespace meetMoltres
         public const int MIN_Y = 0;
         public const int MAX_Y = 20;
 
+        private static void ProcessInput()
+        {
+            Input.Process();
+        }
+
         // 오브젝트를 그린다.
         public static void RenderObject(int x, int y, string icon, ConsoleColor color)
         {
