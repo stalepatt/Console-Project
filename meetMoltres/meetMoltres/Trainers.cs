@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace meetMoltres
 {
-    internal class Rock
+    internal class Trainers
     {
-        public int X;
-        public int Y;
-        public bool IsOnGoal;
-
     }
 }

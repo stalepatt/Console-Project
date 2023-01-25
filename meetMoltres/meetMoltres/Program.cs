@@ -42,12 +42,14 @@ namespace LegendaryMoltres
             int pushedRockIndex = 0;
 
             // 바위가 트리거 위에 올라와있는지 저장
-            bool[] isRockOnTrigger = new bool[triggerCount];
+            bool[] isRockOnTrigger = new bool[rockCount];
 
             while (true)
             {
                 //---------render---------
                 Console.Clear();
+                // 바위가 트리거 위로 올라왔는지 확인
+                int rockOnTriggerCount = Game.CountRockOnTrigger(rocks, triggers);
 
                 //--트리거 출력
                 for (int triggerId = 0; triggerId < triggerCount; ++triggerId)
@@ -61,7 +63,8 @@ namespace LegendaryMoltres
                 //--바위 출력
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
-                    Game.RenderObject(rocks[rockId].X, rocks[rockId].Y, "O", ConsoleColor.White);
+                    ConsoleColor rockColor = rocks[rockId].IsOnGoal ? ConsoleColor.DarkRed : ConsoleColor.White;
+                    Game.RenderObject(rocks[rockId].X, rocks[rockId].Y, "O", rockColor);
                 }
 
                 //--벽 출력
@@ -72,6 +75,11 @@ namespace LegendaryMoltres
                 //--사라지는 벽 출력
                 for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId)
                 {
+                    
+                    if (rockOnTriggerCount == triggerCount)
+                    {
+                        break;
+                    }
                     Game.RenderObject(disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y, "§", ConsoleColor.DarkBlue);
                 }
 
@@ -154,6 +162,10 @@ namespace LegendaryMoltres
 
                 for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId) 
                 {
+                    if (rockOnTriggerCount == triggerCount)
+                    {
+                        break;
+                    }
                     if (false == CollisionHelper.IsCollided(player.X, disappearingWalls[disappearingWallId].X, player.Y, disappearingWalls[disappearingWallId].Y ))
                     {  
                         continue; 
@@ -165,8 +177,6 @@ namespace LegendaryMoltres
                     break;
                 }
 
-                // 바위가 트리거 위로 올라왔는지 확인
-                int rockOnTriggerCount = Game.CountRockOnTrigger(rocks, triggers);               
                 
             }            
         }

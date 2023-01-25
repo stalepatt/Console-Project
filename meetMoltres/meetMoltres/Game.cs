@@ -18,8 +18,9 @@ namespace meetMoltres
         // 오브젝트를 그린다.
         public static void RenderObject(int x, int y, string icon, ConsoleColor color)
         {
-            Console.ForegroundColor = color;
+            
             Console.SetCursorPosition(x, y);
+            Console.ForegroundColor = color;
             Console.Write(icon);
         }
                
