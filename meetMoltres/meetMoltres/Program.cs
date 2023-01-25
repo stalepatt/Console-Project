@@ -1,7 +1,4 @@
 ﻿using meetMoltres;
-using System.Text;
-using System;
-using System.Runtime.CompilerServices;
 using System.Media;
 
 namespace LegendaryMoltres
@@ -10,7 +7,6 @@ namespace LegendaryMoltres
     {
         static void Main()
         {
-
             // Console Initial Settings
             Console.ResetColor();
             Console.CursorVisible = false;
@@ -28,7 +24,7 @@ namespace LegendaryMoltres
             //--사운드 출력
             SoundPlayer sdplayer = new SoundPlayer("caveSound.wav");
             sdplayer.Load();
-            sdplayer.Play();
+            sdplayer.PlayLooping();
 
             // 맵 파일 파싱하여 초기 데이터 구성
             Player player;
@@ -37,13 +33,15 @@ namespace LegendaryMoltres
             Trigger[] triggers;
             DisappearingWall[] disappearingWalls;
             Trainer[] trainers;
-            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers, out disappearingWalls, out trainers);
+            Ladder[] ladders;
+            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers, out disappearingWalls, out trainers, out ladders);
 
             int rockCount = rocks.Length;
             int wallCount = walls.Length;
             int triggerCount = triggers.Length;
             int disappearingWallCount = disappearingWalls.Length;
             int trainerCount = trainers.Length;
+            int ladderCount = ladders.Length;
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;
@@ -54,7 +52,7 @@ namespace LegendaryMoltres
             while (true)
             {
                 //---------render---------
-                Console.Clear();
+                
                 // 바위가 트리거 위로 올라왔는지 확인
                 int rockOnTriggerCount = Game.CountRockOnTrigger(rocks, triggers);
 
@@ -64,9 +62,8 @@ namespace LegendaryMoltres
                     Game.RenderObject(triggers[triggerId].X, triggers[triggerId].Y, "Θ", ConsoleColor.Blue);
                 }
 
-                //--플레이어 출력
-                Game.RenderObject(player.X, player.Y, "¶", ConsoleColor.Red);
 
+                
                 //--바위 출력
                 for (int rockId = 0; rockId < rockCount; ++rockId)
                 {
@@ -86,10 +83,21 @@ namespace LegendaryMoltres
                     
                     if (rockOnTriggerCount == triggerCount)
                     {
+                        Game.RenderObject(disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y, " ", ConsoleColor.DarkBlue);
                         break;
                     }
                     Game.RenderObject(disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y, "§", ConsoleColor.DarkBlue);
                 }
+
+                //--사다리 출력
+                for (int ladderId = 0; ladderId < ladderCount; ++ladderId)
+                {
+                    Game.RenderObject(ladders[ladderId].X, ladders[ladderId].Y, "≡", ConsoleColor.DarkGray);
+                }
+
+                //--플레이어 출력
+                Game.RenderObject(player.ex_X, player.ex_Y, " ", ConsoleColor.Black);
+                Game.RenderObject(player.X, player.Y, "¶", ConsoleColor.Red);
 
                 //--트레이너 출력
                 for (int trainerId = 0; trainerId < trainerCount; ++trainerId)
@@ -98,14 +106,17 @@ namespace LegendaryMoltres
                 }
 
                 
+                
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
 
                 //---------처리---------
 
                 //플레이어 이동
+                player.ex_X = player.X;
+                player.ex_Y = player.Y;
                 Movement.MovePlayer(key, player);
-
+                
                 // 플레이어와 벽이 충돌했을 때
                 for (int wallId = 0; wallId < wallCount; ++wallId)
                 {

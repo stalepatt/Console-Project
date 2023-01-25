@@ -42,7 +42,7 @@ namespace meetMoltres
             return File.ReadAllLines(mapFilePath);
         }
 
-        public static void ParseMaps(string[] map, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers, out DisappearingWall[] disappearingWalls, out Trainer[] trainers)
+        public static void ParseMaps(string[] map, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers, out DisappearingWall[] disappearingWalls, out Trainer[] trainers, out Ladder[] ladders)
         {
             Debug.Assert(map != null);
             String[] mapMetaData = map[map.Length - 1].Split(" ");
@@ -52,12 +52,14 @@ namespace meetMoltres
             triggers = new Trigger[int.Parse(mapMetaData[2])];
             disappearingWalls = new DisappearingWall[int.Parse(mapMetaData[3])];
             trainers = new Trainer[int.Parse(mapMetaData[4])];
+            ladders = new Ladder[int.Parse(mapMetaData[5])];
 
             int rockIndex = 0;
             int wallIndex = 0;
             int triggerIndex = 0;
             int disappearingWallIndex = 0;
             int trainerIndex = 0;
+            int ladderIndex = 0;
 
             for (int y = 0; y < map.Length - 1; ++y)
             {
@@ -92,7 +94,9 @@ namespace meetMoltres
                         case 'I':
                             break;
                         case '╫':
-                            break;
+                            ladders[ladderIndex] = new Ladder { X = x, Y = y };
+                            ++ladderIndex;
+                            break;                            
                         case ' ':
                             break;
                         default:
