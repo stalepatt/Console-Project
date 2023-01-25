@@ -2,6 +2,7 @@
 using System.Text;
 using System;
 using System.Runtime.CompilerServices;
+using System.Media;
 
 namespace LegendaryMoltres
 {
@@ -24,6 +25,11 @@ namespace LegendaryMoltres
                 Console.WriteLine(lines[i]);
             }
 
+            //--사운드 출력
+            SoundPlayer sdplayer = new SoundPlayer("caveSound.wav");
+            sdplayer.Load();
+            sdplayer.Play();
+
             // 맵 파일 파싱하여 초기 데이터 구성
             Player player;
             Rock[] rocks;
@@ -44,7 +50,7 @@ namespace LegendaryMoltres
 
             // 바위가 트리거 위에 올라와있는지 저장
             bool[] isRockOnTrigger = new bool[rockCount];
-
+                        
             while (true)
             {
                 //---------render---------
@@ -89,8 +95,9 @@ namespace LegendaryMoltres
                 for (int trainerId = 0; trainerId < trainerCount; ++trainerId)
                 {
                     Game.RenderObject(trainers[trainerId].X, trainers[trainerId].Y, "T", ConsoleColor.Black);
-                }                               
+                }
 
+                
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
 
