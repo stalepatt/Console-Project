@@ -7,5 +7,6 @@
         public const char Wall = '#';
         public const char Trigger = 'G';
         public const char DisappearingWall = '§';
+        public const char Trainer = 'T';
     }
 }

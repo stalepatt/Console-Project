@@ -15,7 +15,6 @@ namespace LegendaryMoltres
             Console.CursorVisible = false;
             Console.Title = "LegendaryMoltres";
             Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Red;
             Console.Clear();
 
             // 맵 파일 불러오기
@@ -31,12 +30,14 @@ namespace LegendaryMoltres
             Wall[] walls;
             Trigger[] triggers;
             DisappearingWall[] disappearingWalls;
-            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers, out disappearingWalls);
+            Trainer[] trainers;
+            Game.ParseMaps(lines, out player, out rocks, out walls, out triggers, out disappearingWalls, out trainers);
 
             int rockCount = rocks.Length;
             int wallCount = walls.Length;
             int triggerCount = triggers.Length;
             int disappearingWallCount = disappearingWalls.Length;
+            int trainerCount = trainers.Length;
 
             // 여러 개의 바위 중 어떤 바위인지 구분하기 위한 인덱스
             int pushedRockIndex = 0;
@@ -72,6 +73,7 @@ namespace LegendaryMoltres
                 {
                     Game.RenderObject(walls[wallId].X, walls[wallId].Y, "▒", ConsoleColor.DarkYellow);
                 }
+                
                 //--사라지는 벽 출력
                 for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId)
                 {
@@ -82,6 +84,12 @@ namespace LegendaryMoltres
                     }
                     Game.RenderObject(disappearingWalls[disappearingWallId].X, disappearingWalls[disappearingWallId].Y, "§", ConsoleColor.DarkBlue);
                 }
+
+                //--트레이너 출력
+                for (int trainerId = 0; trainerId < trainerCount; ++trainerId)
+                {
+                    Game.RenderObject(trainers[trainerId].X, trainers[trainerId].Y, "T", ConsoleColor.Black);
+                }                               
 
                 //---------입력---------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -158,7 +166,7 @@ namespace LegendaryMoltres
                     break;
                 }
 
-                // 사라지는 벽과 플레이어 충돌
+                // 플레이어와 사라지는 벽 충돌
 
                 for (int disappearingWallId = 0; disappearingWallId < disappearingWallCount; ++disappearingWallId) 
                 {
@@ -177,6 +185,19 @@ namespace LegendaryMoltres
                     break;
                 }
 
+                // 플레이어와 트레이너 충돌
+                for (int trainerId = 0; trainerId < trainerCount; ++trainerId)
+                {
+                    if (false == CollisionHelper.IsCollided(player.X, trainers[trainerId].X, player.Y, trainers[trainerId].Y))
+                    {
+                        continue;
+                    }
+                    CollisionHelper.OnCollision(() =>
+                    {
+                        Movement.PushOut(player.MoveDirection, ref player.X, ref player.Y, trainers[trainerId].X, trainers[trainerId].Y);
+                    });
+                    break;
+                }
                 
             }            
         }

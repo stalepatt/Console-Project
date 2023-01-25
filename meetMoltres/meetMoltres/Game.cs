@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace meetMoltres
 {
@@ -47,7 +42,7 @@ namespace meetMoltres
             return File.ReadAllLines(mapFilePath);
         }
 
-        public static void ParseMaps(string[] map, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers, out DisappearingWall[] disappearingWalls)
+        public static void ParseMaps(string[] map, out Player player, out Rock[] rocks, out Wall[] walls, out Trigger[] triggers, out DisappearingWall[] disappearingWalls, out Trainer[] trainers)
         {
             Debug.Assert(map != null);
             String[] mapMetaData = map[map.Length - 1].Split(" ");
@@ -56,11 +51,13 @@ namespace meetMoltres
             walls = new Wall[int.Parse(mapMetaData[1])];
             triggers = new Trigger[int.Parse(mapMetaData[2])];
             disappearingWalls = new DisappearingWall[int.Parse(mapMetaData[3])];
+            trainers = new Trainer[int.Parse(mapMetaData[4])];
 
             int rockIndex = 0;
             int wallIndex = 0;
             int triggerIndex = 0;
             int disappearingWallIndex = 0;
+            int trainerIndex = 0;
 
             for (int y = 0; y < map.Length - 1; ++y)
             {
@@ -89,6 +86,8 @@ namespace meetMoltres
                             ++disappearingWallIndex;
                             break;                       
                         case 'T':
+                            trainers[trainerIndex] = new Trainer { X = x, Y = y };
+                            ++trainerIndex;
                             break;
                         case 'I':
                             break;
