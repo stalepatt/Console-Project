@@ -7,7 +7,6 @@ namespace meetMoltres
         public static void Init()
         {
             // Console Initial Settings
-            Console.SetWindowSize(300, 300);
             Console.ResetColor();
             Console.CursorVisible = false;
             Console.Title = "LegendaryMoltres";

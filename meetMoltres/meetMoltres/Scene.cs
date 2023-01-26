@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Media;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace meetMoltres
 {
@@ -39,12 +34,12 @@ namespace meetMoltres
             //{
             //    if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
             //    {
-                    
+
             //        sdplayer2.PlayLooping();
             //        stopwatch.Reset();
             //        break;
             //    }
-            //}            
+            //}
             Scene.RenderTitle();
             Console.WriteLine("press spacebar to start");
         }
@@ -65,11 +60,6 @@ namespace meetMoltres
         }
         public static void UpdateTitle()
         {
-            if (Input.IsKeyDown(ConsoleKey.A))
-            {
-                Console.Clear();
-                Scene.RenderTitle();
-            }
             if (Input.IsKeyDown(ConsoleKey.Spacebar))
             {
                 SetNextScene(SceneKind.InGame);

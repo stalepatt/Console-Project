@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace meetMoltres
+﻿namespace meetMoltres
 {
+    enum LadderName
+    {
+        Entrance,
+        To2F
+    }
     internal class Ladder
     {
         public int X;
