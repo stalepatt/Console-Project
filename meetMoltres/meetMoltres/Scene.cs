@@ -66,11 +66,7 @@ namespace meetMoltres
             Console.Clear();
             // 맵 파일 불러오기
             string[] lines = Game.LoadMaps(01);
-            for (int i = 0; i < lines.Length; ++i)
-            {
-                Console.WriteLine(lines[i]);
-            }
-
+           
             //--사운드 출력
             SoundPlayer sdplayer = new SoundPlayer("caveSound.wav");
             sdplayer.Load();

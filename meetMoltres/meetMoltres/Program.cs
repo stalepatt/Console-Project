@@ -10,6 +10,8 @@ namespace LegendaryMoltres
         {
             Game.Init();
 
+            Game.Run();
+
             // 맵 파일 불러오기
             string[] lines = Game.LoadMaps(01);
             for (int i = 0; i < lines.Length; ++i)

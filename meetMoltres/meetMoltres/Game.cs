@@ -22,6 +22,20 @@ namespace meetMoltres
             Console.ForegroundColor = ConsoleColor.Black;
             Console.Clear();
         }
+
+        public static void Run()
+        {
+            while (true)
+            {
+                if (Scene.IsSceneChange())
+                {
+                    Scene.ChangeScene();
+                }
+                Render();
+                ProcessInput();
+                Upadate();
+            }
+        }
         private static void Render()
         {
 
@@ -39,7 +53,18 @@ namespace meetMoltres
             Input.Process();
         }
 
-        
+        private static void Upadate()
+        {
+            switch (Scene.GetCurrentScene())
+            {
+                case SceneKind.Title:
+                    Scene.UpdateTitle(); break;
+                case SceneKind.InGame:
+                    Scene.UpdateInGame(); break;
+
+            }
+        }
+
         // 오브젝트를 그린다.
         public static void RenderObject(int x, int y, string icon, ConsoleColor color)
         {
