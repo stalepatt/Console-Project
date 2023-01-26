@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Numerics;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace meetMoltres
 {
@@ -10,11 +12,34 @@ namespace meetMoltres
         public const int MIN_Y = 0;
         public const int MAX_Y = 20;
 
+        private static void Init()
+        {
+            // Console Initial Settings
+            Console.ResetColor();
+            Console.CursorVisible = false;
+            Console.Title = "LegendaryMoltres";
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Clear();
+        }
+        private static void Render()
+        {
+
+            switch (Scene.GetCurrentScene())
+            {
+                case SceneKind.Title:
+                    Scene.RenderTitle(); break;
+                case SceneKind.InGame:
+                    Scene.RenderInGame(); break;
+
+            }
+        }
         private static void ProcessInput()
         {
             Input.Process();
         }
 
+        
         // 오브젝트를 그린다.
         public static void RenderObject(int x, int y, string icon, ConsoleColor color)
         {
@@ -134,5 +159,7 @@ namespace meetMoltres
             }
             return result;
         }
+
+        
     }
 }

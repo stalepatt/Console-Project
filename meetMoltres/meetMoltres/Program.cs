@@ -217,6 +217,20 @@ namespace LegendaryMoltres
                     break;
                 }
                 
+                // 플레이어와 사다리 상호작용
+                for (int ladderId = 0; ladderId < ladderCount; ++ladderId)
+                {
+                    ladders[ladderId].Name = (LadderName)ladderId;                     
+                    if (false == CollisionHelper.IsCollided(player.X, ladders[ladderId].X, player.Y, ladders[ladderId].Y))
+                    {
+                        continue;
+                    }
+                    CollisionHelper.OnCollision(() =>
+                    {
+
+
+                    });
+                }
             }            
         }
     }
