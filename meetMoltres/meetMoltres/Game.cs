@@ -19,7 +19,7 @@ namespace meetMoltres
             Console.Write(icon);
         }
                
-                // 비정상 동작 시 에러 메시지 출력 후 종료
+        // 비정상 동작 시 에러 메시지 출력 후 종료
         public static void ExitWithError(string errorMessage)
         {
             Console.Clear();
