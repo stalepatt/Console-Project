@@ -80,8 +80,8 @@ namespace meetMoltres
         {
             Console.Clear();
             SoundPlayer sdplayer3 = new SoundPlayer("caveSound.wav");
-            //// 맵 파일 파싱하여 초기 데이터 구성
-
+            sdplayer3.Load();
+            sdplayer3.PlayLooping();
         }
         public static void RenderInGame()
         {

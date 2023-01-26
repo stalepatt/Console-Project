@@ -8,7 +8,7 @@ namespace meetMoltres
 {
     public static class Input
     {
-        private static ConsoleKey _key;
+        public static ConsoleKey _key;
         public static void Process()
         {
             _key = default;
