@@ -8,5 +8,6 @@
         public const char Trigger = 'G';
         public const char DisappearingWall = '§';
         public const char Trainer = 'T';
+        public const char Ladder = '≡';
     }
 }

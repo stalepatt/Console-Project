@@ -33,18 +33,18 @@ namespace meetMoltres
             Console.ForegroundColor = ConsoleColor.Red;
             Scene.RenderTitle();
             Console.WriteLine("Please Wait...");
-            sdplayer.Play();
-            stopwatch.Start();
-            while (true)
-            {
-                if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
-                {
+            //sdplayer.Play();
+            //stopwatch.Start();
+            //while (true)
+            //{
+            //    if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
+            //    {
                     
-                    sdplayer2.PlayLooping();
-                    stopwatch.Reset();
-                    break;
-                }
-            }            
+            //        sdplayer2.PlayLooping();
+            //        stopwatch.Reset();
+            //        break;
+            //    }
+            //}            
             Scene.RenderTitle();
             Console.WriteLine("press spacebar to start");
         }
@@ -80,18 +80,20 @@ namespace meetMoltres
         {
             Console.Clear();
             SoundPlayer sdplayer3 = new SoundPlayer("caveSound.wav");
+            //// 맵 파일 파싱하여 초기 데이터 구성
+
         }
         public static void RenderInGame()
         {
-            //Map.Render();
+            Map.Render();
         }
         public static void UpdateInGame()
         {
-            //if (Map.IsSetNextMap())
-            //{
-            //    Map.ChangeMap();
-            //}
-            //Map.Update();
+            if (Map.IsSetNextMap())
+            {
+                Map.ChangeMap();
+            }
+            Map.Update();
 
         }
         public static void ReleaseInGame()

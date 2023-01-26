@@ -7,7 +7,7 @@ namespace meetMoltres
         public static void Init()
         {
             // Console Initial Settings
-            Console.SetWindowSize(1000, 500);
+            Console.SetWindowSize(500, 500);
             Console.ResetColor();
             Console.CursorVisible = false;
             Console.Title = "LegendaryMoltres";
@@ -153,17 +153,17 @@ namespace meetMoltres
                             triggers[triggerIndex] = new Trigger { X = x, Y = y };
                             ++triggerIndex;
                             break;
-                        case '§':
+                        case ObjectSymbol.DisappearingWall:
                             disappearingWalls[disappearingWallIndex] = new DisappearingWall { X = x, Y = y };
                             ++disappearingWallIndex;
                             break;                       
-                        case 'T':
+                        case ObjectSymbol.Trainer:
                             trainers[trainerIndex] = new Trainer { X = x, Y = y };
                             ++trainerIndex;
                             break;
                         case 'I':
                             break;
-                        case '╫':
+                        case ObjectSymbol.Ladder:
                             ladders[ladderIndex] = new Ladder { X = x, Y = y };
                             ++ladderIndex;
                             break;                            
