@@ -12,7 +12,7 @@ namespace meetMoltres
         public const int MIN_Y = 0;
         public const int MAX_Y = 20;
 
-        private static void Init()
+        public static void Init()
         {
             // Console Initial Settings
             Console.ResetColor();

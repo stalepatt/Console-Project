@@ -1,5 +1,6 @@
 ﻿using meetMoltres;
 using System.Media;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LegendaryMoltres
 {
@@ -7,12 +8,7 @@ namespace LegendaryMoltres
     {
         static void Main()
         {
-            // Console Initial Settings
-            Console.ResetColor();
-            Console.CursorVisible = false;
-            Console.Title = "LegendaryMoltres";
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.Clear();
+            Game.Init();
 
             // 맵 파일 불러오기
             string[] lines = Game.LoadMaps(01);
@@ -225,13 +221,9 @@ namespace LegendaryMoltres
                     {
                         continue;
                     }
-                    CollisionHelper.OnCollision(() =>
-                    {
-
-
-                    });
+                    
                 }
-            }            
+            }
         }
     }
 }
