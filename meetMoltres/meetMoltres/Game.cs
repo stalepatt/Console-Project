@@ -4,6 +4,62 @@ namespace meetMoltres
 {
     static class Game
     {
+        public static void Init()
+        {
+            // Console Initial Settings
+            Console.SetWindowSize(1000, 500);
+            Console.ResetColor();
+            Console.CursorVisible = false;
+            Console.Title = "LegendaryMoltres";
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Clear();
+            
+        }
+
+        public static void Run()
+        {
+            while (true)
+            {
+                if (Scene.IsSceneChange())
+                {
+                    Scene.ChangeScene();
+                }
+                Render();
+                ProcessInput();
+                Upadate();
+            }
+        }
+        private static void Render()
+        {
+
+            switch (Scene.GetCurrentScene())
+            {
+                case SceneKind.Title:
+                    Scene.RenderTitle();
+                    break;
+                case SceneKind.InGame:
+                    Scene.RenderInGame(); 
+                    break;
+
+            }
+        }
+        private static void Upadate()
+        {
+            switch (Scene.GetCurrentScene())
+            {
+                case SceneKind.Title:
+                    Scene.UpdateTitle(); break;
+                case SceneKind.InGame:
+                    Scene.UpdateInGame(); break;
+
+            }
+        }
+        private static void ProcessInput()
+        {
+            Input.Process();
+        }
+
         // 기호 상수 정의
         public const int MIN_X = 0;
         public const int MAX_X = 20;
@@ -26,6 +82,20 @@ namespace meetMoltres
             Console.WriteLine(errorMessage);
             Environment.Exit(1);
         }
+
+        public static string[] LoadImage(string nameImage)
+        {
+            // 경로를 구성한다.
+            string ImageFilePath = Path.Combine("..\\..\\..\\Assets", "Maps", $"{nameImage}Image.txt");
+            // 파일 존재 확인
+            if (false == File.Exists(ImageFilePath))
+            {
+                ExitWithError($"맵 파일이 없습니다. 이미지 이름({ImageFilePath})");
+            }
+            // 파일의 내용을 불러온다.
+            return File.ReadAllLines(ImageFilePath);
+        }
+        public static string[] Image = null;
 
         // map 경로 설정
         public static string[] LoadMaps(int mapNumber)
