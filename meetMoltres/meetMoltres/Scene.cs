@@ -31,19 +31,22 @@ namespace meetMoltres
             sdplayer2.Load();
             Stopwatch stopwatch = new Stopwatch();
             Console.ForegroundColor = ConsoleColor.Red;
-            Scene.RenderTitle();            
+            Scene.RenderTitle();
+            Console.WriteLine("Please Wait...");
             sdplayer.Play();
-
             stopwatch.Start();
             while (true)
             {
                 if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
                 {
+                    
                     sdplayer2.PlayLooping();
                     stopwatch.Reset();
                     break;
                 }
-            }
+            }            
+            Scene.RenderTitle();
+            Console.WriteLine("press spacebar to start");
         }
         private static string[] _image = null;
         public static void RenderTitle()
@@ -58,7 +61,7 @@ namespace meetMoltres
         }
         public static void ReleaseTitle()
         {
-
+            
         }
         public static void UpdateTitle()
         {
@@ -76,6 +79,7 @@ namespace meetMoltres
         public static void InitInGame()
         {
             Console.Clear();
+            SoundPlayer sdplayer3 = new SoundPlayer("caveSound.wav");
         }
         public static void RenderInGame()
         {
