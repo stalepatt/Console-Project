@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Media;
+using System.Numerics;
 
 namespace meetMoltres
 {
@@ -7,6 +8,14 @@ namespace meetMoltres
     {
         Title,
         InGame
+    }
+    public enum SoundKind
+    {
+        battle,
+        boss,
+        cave,
+        opening,
+        title
     }
     public static class Scene
     {
@@ -18,30 +27,31 @@ namespace meetMoltres
 
         public static void InitTitle()
         {
-
-            SoundPlayer sdplayer = new SoundPlayer("openingSound.wav");
+            
+            SoundPlayer sdplayer = new SoundPlayer(LoadSound(SoundKind.opening));
             int sdPlayTimeSecond = 12;
-            SoundPlayer sdplayer2 = new SoundPlayer("titleSound.wav");
+            SoundPlayer sdplayer2 = new SoundPlayer(LoadSound(SoundKind.title));
             sdplayer.Load();
             sdplayer2.Load();
             Stopwatch stopwatch = new Stopwatch();
             Console.ForegroundColor = ConsoleColor.Red;
             Scene.RenderTitle();
             Console.WriteLine("Please Wait...");
-            //sdplayer.Play();
-            //stopwatch.Start();
-            //while (true)
-            //{
-            //    if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
-            //    {
+            sdplayer.Play();
+            stopwatch.Start();
+            while (true)
+            {
+                if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
+                {
 
-            //        sdplayer2.PlayLooping();
-            //        stopwatch.Reset();
-            //        break;
-            //    }
-            //}
+                    sdplayer2.PlayLooping();
+                    stopwatch.Reset();
+                    break;
+                }
+            }
             Scene.RenderTitle();
             Console.WriteLine("press spacebar to start");
+            Console.WriteLine("주의사항 : 실행은 전체화면으로, 창을 옮길 시 게임이 종료됩니다.");
         }
         private static string[] _image = null;
         public static void RenderTitle()
@@ -69,7 +79,7 @@ namespace meetMoltres
         public static void InitInGame()
         {
             Console.Clear();
-            SoundPlayer sdplayer3 = new SoundPlayer("caveSound.wav");
+            SoundPlayer sdplayer3 = new SoundPlayer(LoadSound(SoundKind.cave));
             sdplayer3.Load();
             sdplayer3.PlayLooping();
         }
@@ -128,9 +138,21 @@ namespace meetMoltres
                     case SceneKind.InGame:
                         InitInGame();
                         break;
-
                 }
             }
+        }
+        public static string LoadSound(SoundKind sound)
+        {
+            // 경로를 구성한다.
+            string soundFilePath = Path.Combine("..\\..\\..\\Assets", "Sounds", $"{sound.ToString()}Sound.wav");
+
+            // 파일 존재 확인
+            if (false == File.Exists(soundFilePath))
+            {
+                Game.ExitWithError($"사운드 파일이 없습니다. 사운드 이름({sound})");
+            }
+            return soundFilePath;
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Media;
 
 namespace meetMoltres
 {
@@ -290,6 +291,7 @@ namespace meetMoltres
             if (player.X == 2 && player.Y == 2)
             {
                 SetNextMap(MapKind.Map02);
+
             }
             ////플레이어 이동
             player.ex_X = player.X;
@@ -398,6 +400,31 @@ namespace meetMoltres
 
         private static void UpdateMap02()
         {
+            if (player.Y >= 9)
+            {
+
+                Console.Clear();
+                Console.WriteLine("체험판이 종료되었습니다. 추가 컨텐츠를 원하시면 결제 해주세요><");
+                Console.WriteLine("후원계좌 신한 110-200-000000 유태우");
+                Stopwatch stopwatch = new Stopwatch();
+                int sdPlayTimeSecond = 200;
+                SoundPlayer sdplayer4 = new SoundPlayer(Scene.LoadSound(SoundKind.boss));
+                sdplayer4.Load();
+                stopwatch.Start();
+                sdplayer4.Play();
+                
+                while (true)
+                {
+                    if (stopwatch.Elapsed.Seconds >= sdPlayTimeSecond)
+                    {
+                        Environment.Exit(0);
+                        stopwatch.Reset();
+                        break;
+                    }
+                }
+
+                
+            }
             if (Input.IsKeyDown(ConsoleKey.T))
             {
                 Scene.SetNextScene(SceneKind.Title);
@@ -408,7 +435,7 @@ namespace meetMoltres
             bool[] isRockOnTrigger = new bool[rockCount];
             int rockOnTriggerCount = Game.CountRockOnTrigger(rocks, triggers);
 
-            if (player.X == 3 && player.Y == 3)
+            if (player.X == 1 && player.Y == 2)
             {
                 SetNextMap(MapKind.Map01);                
             }

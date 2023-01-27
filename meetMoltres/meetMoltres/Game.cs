@@ -85,11 +85,11 @@ namespace meetMoltres
         public static string[] LoadImage(string nameImage)
         {
             // 경로를 구성한다.
-            string ImageFilePath = Path.Combine("..\\..\\..\\Assets", "Maps", $"{nameImage}Image.txt");
+            string ImageFilePath = Path.Combine("..\\..\\..\\Assets", "Images", $"{nameImage}Image.txt");
             // 파일 존재 확인
             if (false == File.Exists(ImageFilePath))
             {
-                ExitWithError($"맵 파일이 없습니다. 이미지 이름({ImageFilePath})");
+                ExitWithError($"이미지 파일이 없습니다. 이미지 이름({ImageFilePath})");
             }
             // 파일의 내용을 불러온다.
             return File.ReadAllLines(ImageFilePath);
