@@ -37,6 +37,11 @@ namespace meetMoltres
             Console.ForegroundColor = ConsoleColor.Red;
             Scene.RenderTitle();
             Console.WriteLine("Please Wait...");
+            Console.WriteLine(" ");
+            Console.WriteLine("--------플레이 방법--------");
+            Console.WriteLine("키보드 방향키를 입력하여 이동합니다.");
+            Console.WriteLine("'O'바위를 이동시켜 'Θ'에 올려놓습니다");
+            Console.WriteLine("'≡'사다리로 이동하면 재도전 / 다음 스테이지 / 이전 스테이지로 넘어갑니다");
             sdplayer.Play();
             stopwatch.Start();
             while (true)
